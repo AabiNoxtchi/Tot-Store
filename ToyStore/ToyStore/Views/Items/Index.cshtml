@@ -1,0 +1,85 @@
+﻿@model ToyStore.ViewModels.Items.IndexVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Toys";
+}
+
+<div class="my-container">
+    @{ Html.RenderPartial("/Views/Shared/IndexFilterPartial.cshtml", Model.Filter); }
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <h2 class="panel-title pull-left" style="margin-left:10px;">
+                <strong>Toys</strong>
+            </h2>
+        </div>
+    </div>
+
+    <a href="@Url.Action("Edit","Items")" class="button">Add new Toy</a>
+
+    @using (Html.BeginForm("Export", "Items", FormMethod.Post, new { @class = "exportBtn" }))
+    {
+        <input type="hidden" name="GridHtml" />
+        <input class="button" type="submit" id="btnSubmit" value="Export" />
+    }
+
+    @{ Html.RenderPartial("/Views/Shared/PagerPartial.cshtml", Model.Pager); }
+
+    <div id="Grid">
+        <table class="exportableTable">
+            <tr>
+                <th><a href="@Url.Action("Index","Items")?OrderBy.Name=name">Name</a></th>
+                <th><a href="@Url.Action("Index","Items")?OrderBy.IdentificationKod=kod">Identification Kod</a></th>
+                <th><a href="@Url.Action("Index","Items")?OrderBy.Category=category">Category</a></th>
+                <th><a href="@Url.Action("Index","Index")?OrderBy.Age=age">Age</th>
+                <th><a href="@Url.Action("Index","Items")?OrderBy.Gender=gender">Gender</a></th>
+                <th><a href="@Url.Action("Index","Items")?OrderBy.Price=price">Price</a></th>
+                <th><a href="@Url.Action("Index","Items")?OrderBy.Quantity=quantity">Quantity</a></th>
+                <th class="removable"></th>
+            </tr>
+
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+
+                    <td><a href="#" class="show-detail" data-details="@(item.Id)" style="color:#4E9CAF">@item.Name</a></td>
+                    <td>@item.IdentificationKod</td>
+                    <td>@Model.Filter.CategoriesList.FirstOrDefault(c => c.Value == item.CategoryId.ToString()).Text</td>
+                    <td>@Model.Filter.AgesList.FirstOrDefault(c => c.Value == item.AgeId.ToString()).Text</td>
+                    <td>@item.Gender</td>
+                    <td>@String.Format("{0:C}", item.AvailableItems.FirstOrDefault() != null ? item.AvailableItems.FirstOrDefault().Price : 0)</td>
+                    <td>@(item.AvailableItems.FirstOrDefault() != null ? item.AvailableItems.FirstOrDefault().AvailableQuantity : 0)</td>
+
+                    <td class="removable">
+                        <a href="@Url.Action("Edit", "Items", new { Id = item.Id })" class="button smallbtn">edit</a>
+                        <a href="@Url.Action("Delete", "Items", new { Id = item.Id })" class="button smallbtn" style="background-color: darkslateblue">delete</a>
+                    </td>
+
+                </tr>
+                <tr>
+                    <td colspan="8" id="hidden-detail@(item.Id)" style="display:none">
+                        <table style="width:100%;margin:1%"><tr><td style="padding:1%">Description : @item.Description</td></tr></table>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+
+    </div>
+<hr/>
+
+    @section scripts{
+
+        <script>
+
+            $(".hidden-detail").hide();
+
+            $(".show-detail").click(function () {
+
+                var id = $(this).data('details');
+                $('#hidden-detail' + id).toggle();
+            });
+
+        </script>
+    }

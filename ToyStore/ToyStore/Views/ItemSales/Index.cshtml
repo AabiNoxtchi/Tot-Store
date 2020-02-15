@@ -1,0 +1,444 @@
+﻿@model ToyStore.ViewModels.ItemSales.IndexVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Sales";
+}
+@{
+    if (Model.Items.Count() > 0)
+    {
+        //show only sales that are in model.Items
+        List<int> distinctSaleIds = Model.Items.Select(s => s.SaleId).Distinct().ToList();
+        List<Sale> sales = new List<Sale>();
+        foreach (Sale sale in Model.SalesItems)
+        {
+            if (distinctSaleIds.Contains(sale.Id))
+            {
+                sales.Add(sale);
+            }
+        }
+
+        Model.SalesItems = sales;
+    }
+}
+
+<div class="my-container">
+    @{ Html.RenderPartial("/Views/Shared/IndexFilterPartial.cshtml", Model.Filter); }
+</div>
+<br /><br />
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <h2 class="panel-title pull-left" style="margin-left:10px;">
+                <strong>Sales</strong>
+            </h2>
+
+            <span style="float:right;padding-right:5%">
+                <input type="radio" name="SaleView" value="SaleView" > Sales View
+            </span>
+            <span style="float:right;padding-right:5%">
+                <input type="radio" name="SaleView" value="ItemSaleView" checked> Item Sales View
+            </span>
+
+        </div>
+    </div>
+
+    <button style="margin-right:10px" class="button" onclick="addNewSale()">Add New Sale</button>
+    @using (Html.BeginForm("Export", "ItemDeliveries", FormMethod.Post, new { @class = "exportBtn" }))
+    {
+        <input type="hidden" name="GridHtml" />
+        <input class="button" type="submit" id="btnSubmit" value="Export" />
+    }
+
+    @{ Html.RenderPartial("/Views/Shared/PagerPartial.cshtml", Model.Pager); }
+
+    @*Receive All Database Data From Controller And Display Those Data In Client Side*@
+
+
+   
+        @if (Model.Items.Count() != 0)
+        {
+            <div class="sales-view">
+
+                @foreach (var item in Model.SalesItems)
+                {
+                    <div class="panel-body">
+                        <table class="table table-striped table-responsive">
+                            <tbody>
+                                <tr>
+                                    <th>Sale Number : @item.Id </th>
+                                    <th>Sale Date : @item.Date</th>
+                                    <th style=" width: 100px">
+                                        <a href="@Url.Action("DeleteSale", "ItemSales", new { Id = item.Id })" class="button smallbtn" style="margin: 0 auto;
+                                                                                                                               padding: 8px 12px;background-color: darkslateblue;">delete</a>
+                                    </th>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <table class="table table-bordered exportableTable">
+                                            <tbody>
+                                                <tr>
+                                                    <td>Product</td>
+                                                    <td>Quantity</td>
+                                                    <td>Unit Price</td>
+                                                    <td>Total</td>
+                                                    <td class="removable" style="width:140px"></td>
+                                                </tr>
+                                                @{
+                                                    decimal totalBill = 0;
+                                                    decimal amount = 0;
+                                                }
+                                                @foreach (var itemSale in item.ItemSales)
+                                                {
+                                                    amount = itemSale.SoldPrice * itemSale.SoldQuantity;
+                                                    <tr>
+
+                                                        <td>@Model.Filter.ItemsList.FirstOrDefault(c => c.Value == itemSale.AvailableItem.ItemId.ToString()).Text</td>
+                                                        <td>@itemSale.SoldQuantity</td>
+                                                        <td>@String.Format("{0:C}", itemSale.SoldPrice) </td>
+                                                        <td>@String.Format("{0:C}", amount) </td>
+                                                        <td class="removable">
+                                                            <a href="@Url.Action("Edit", "ItemSales", new { Id = itemSale.Id })" class="button smallbtn" style="margin: 0 auto;
+                                                                                                                               padding: 8px 12px;">edit</a>
+                                                            <a href="@Url.Action("Delete", "ItemSales", new { Id = itemSale.Id })" class="button smallbtn" style="background-color: darkslateblue;margin: 0 auto;
+                                                                                                                               padding: 8px 12px;">delete</a>
+
+                                                        </td>
+                                                    </tr>
+                                                    totalBill = totalBill + @Convert.ToDecimal(amount);
+                                                }
+                                            </tbody>
+                                        </table>
+                                        <span class="pull-right" style="margin-right:100px;"><strong>Total Bill :  </strong> @String.Format("{0:C}", totalBill)</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="panel-body">
+                <h3 style="color:black;">Empty Sales</h3>
+            </div>
+        }
+
+        <div class="item-sales-view">
+            <div class="panel-body">
+                <table class="exportableTable">
+                    <tr>
+                        <th><a href="@Url.Action("Index","ItemSales")?OrderBy.SaleId=saleid">Sale Number</a></th>
+                        <th><a href="@Url.Action("Index","ItemSales")?OrderBy.Date=date">Date</a></th>
+                        <th><a href="@Url.Action("Index","ItemSales")?OrderBy.Item=item">Item</a></th>
+                        <th><a href="@Url.Action("Index","ItemSales")?OrderBy.SoldQuantity=soldquantity">Price</a></th>
+                        <th><a href="@Url.Action("Index","ItemSales")?OrderBy.SoldPrice=soldprice">Quantity</a></th>
+
+                        <th class="removable"></th>
+                    </tr>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.SaleId</td>
+                            <td>@Model.SalesItems.FirstOrDefault(c => c.Id == item.SaleId).Date</td>
+                            <td>@Model.Filter.ItemsList.FirstOrDefault(i => i.Value == (Model.AvailableItems.FirstOrDefault(a => a.Id == item.AvailableItemId).ItemId).ToString()).Text</td>
+                            <td>@String.Format("{0:C}", item.SoldPrice)</td>
+                            <td>@item.SoldQuantity</td>
+
+                            <td class="removable">
+                                <a href="@Url.Action("Edit", "ItemSales", new { Id = item.Id })" class="button smallbtn">edit</a>
+                                <a href="@Url.Action("Delete", "ItemSales", new { Id = item.Id })" class="button smallbtn" style="background-color: darkslateblue">delete</a>
+                            </td>
+
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+   
+</div>
+<hr />
+@*Desing Bootdtrap Modal With Sale Form*@
+<div class="modal fade" id="newSaleModal">
+    <div class="modal-dialog modal-lg" style=" width: 1000px !important;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="form-group">
+                    <a href="#" class="close" data-dismiss="modal">&times;</a>
+                    <h4>New Sale</h4>
+                </div>
+            </div>
+            <form id="NewOrderForm">
+
+                <div class="modal-body">
+                    @*Sale Details*@
+
+                    <div class="form-horizontal">
+                        <input type="hidden" id="Id" name="Id" />
+                        <div class="form-group">
+                            <label class="control-label col-md-2">
+                                Date
+                            </label>
+                            <div class="col-md-4">
+                                <input type="datetime" id="date" name="date" placeholder="Date" class="form-control DateTimePicker" value="@DateTime.Now" />
+                            </div>
+                        </div>
+                    </div>
+                    @*Sale Details*@
+                    <div class="form-horizontal">
+                        <input type="hidden" id="OrderId" />
+                        <div class="form-group">
+                            <label class="control-label col-md-2">
+                                Product Name
+                            </label>
+                            <div class="col-md-4">
+                                <select id="productName" name="productName" placeholder="Product Name" class="form-control">
+                                    <option></option>
+                                    @foreach (AvailableItem availableItem in Model.AvailableItems)
+                                    {
+                                        if (availableItem.AvailableQuantity > 0)
+                                        {
+                                            <option data-availablequantity="@(availableItem.AvailableQuantity)" data-price="@(availableItem.Price)"
+                                                    value="@availableItem.Id">
+                                                @Model.Filter.ItemsList.FirstOrDefault(i => i.Value == availableItem.ItemId.ToString()).Text
+                                            </option>
+                                        }
+                                    }
+                                </select>
+                            </div>
+                            <label class="control-label col-md-2">
+                                Price
+                            </label>
+                            <div class="col-md-4">
+                                <input type="number" id="price" name="price" placeholder="Product Price" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="control-label col-md-2">
+                                Quantity
+                            </label>
+                            <div class="col-md-4">
+                                <input type="number" id="quantity" name="quantity" placeholder="Quantity" class="form-control" min="1" />
+                            </div>
+                            <label class="control-label col-md-2">
+                                Available Quantity
+                            </label>
+                            <div class="col-md-4">
+                                <input type="number" id="availablequantity" name="availablequantity" placeholder="Available Quantity" class="form-control" readonly />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 col-lg-offset-2">
+                                <a id="addToList" class="btn btn-primary">Add To List</a>
+                            </div>
+                        </div>
+                        <table id="detailsTable" class="table">
+                            <thead>
+                                <tr>
+                                    <th style="width:30%">Product</th>
+                                    <th style="width:15%">Quantity</th>
+                                    <th style="width:20%">Unit Price</th>
+                                    <th style="width:25%">Amount</th>
+                                    <th style="width:10%"></th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="reset" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button id="saveSale" type="submit" class="btn btn-danger">Save Sale</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        //Show Modal.
+        function addNewSale() {
+            $("#newSaleModal").modal();
+        }
+
+        $("#productName").change(function () {
+            $(".errormsg").remove();
+            var name = $("#productName option:selected").text();
+            var currentquantity = $("#productName option:selected").data('availablequantity');
+            var headache = false;
+
+            $.each($("#detailsTable tbody tr"), function () {
+                if (name == $(this).find('td:eq(0)').html()) {
+                    headache = true;
+                    $(this).after('<p class="errormsg" style="color:red">This Product is already in the list</p>');
+                    $("#availablequantity").val(currentquantity - Number($(this).find('td:eq(2)').html()));
+                    $("#quantity").val('');
+                    $("#quantity").attr({
+                        "max": currentquantity - Number($(this).find('td:eq(2)').html())
+                    });
+                }
+
+            });
+
+            if (headache == false) {
+                $("#availablequantity").val($(this).find(':selected').data('availablequantity'));
+                $("#quantity").val('');
+                $("#quantity").attr({
+                    "max": $("#availablequantity").val()
+                });
+            }
+
+            $("#price").val($(this).find(':selected').data('price'));
+        });
+
+        //Add Multiple Order.
+        $("#addToList").click(function (e) {
+            e.preventDefault();
+            $(".errormsg").remove();
+
+            var q = $.trim($("#quantity").val());
+            var maxq = $("#availablequantity").val();
+            var isnotvalidquantity = Number(q) > Number(maxq);
+
+            if (q == "" || !(q > 0)) {
+
+                $("#quantity").after('<p class="errormsg" style="color:red">Quantity Must be avalue greater than 0</p>');
+            } else if (isnotvalidquantity) {
+                $("#quantity").after('<p class="errormsg" style="color:red">Quantity Must Be Less than Available Quantity ! </p>');
+            }
+
+            if ($.trim($("#productName").val()) == "" || $.trim($("#price").val()) == "" || q == "" || !(q > 0) || isnotvalidquantity) return;
+
+           var headaches = false;
+            var name = $("#productName option:selected").text();
+            var productName, productId, price, quantity;
+            productName = $("#productName option:selected").text();
+            productId = $("#productName").val(),
+                price = $("#price").val(),
+
+            $.each($("#detailsTable tbody tr"), function () {
+                if (name == $(this).find('td:eq(0)').html()) {
+                    headaches = true;
+                    quantity = Number($("#quantity").val()) + Number($(this).find('td:eq(2)').html());
+                    $(this).remove();
+                }
+                });
+            if (headaches == false) {
+                quantity = $("#quantity").val();
+            }
+               
+            detailsTableBody = $("#detailsTable tbody");
+            var productItem = '<tr><td>' + productName + '</td><td style="display:none">' + productId + '</td><td>' + quantity + '</td><td>' + price + '</td><td>' + ((parseFloat(price) * parseFloat(quantity))).toFixed(2) + '</td><td><a data-itemId="0" href="#" class="deleteItem">delete</a></td></tr>';
+            detailsTableBody.append(productItem);
+
+            clearItem();
+            });
+            
+        //After Add A New Order In The List, Clear Clean The Form For Add More Order.
+        function clearItem() {
+            $("#productName").val('');
+            $("#price").val('');
+            $("#quantity").val('');
+            $("#availablequantity").val('');
+            $(".errormsg").remove();
+        }
+
+        // After Add A New Order In The List, If You Want, You Can Remove It.
+        $(document).on('click', 'a.deleteItem', function (e) {
+            e.preventDefault();
+            var $self = $(this);
+            if ($(this).attr('data-itemId') == "0") {
+                $(this).parents('tr').css("background-color", "#ff6347").fadeOut(300, function () {
+
+                    name = $("#productName option:selected").text();
+                    currentquantity = $("#productName option:selected").data('availablequantity');
+                    if (name == $(this).find('td:eq(0)').html()) {
+                        headache = true;
+                        $("#availablequantity").val(currentquantity + Number($(this).find('td:eq(2)').html()));
+                        $("#quantity").val('');
+                        $("#quantity").attr({
+                            "max": currentquantity + Number($(this).find('td:eq(2)').html())
+                        });
+                    }
+                    if ($(this).after($(".errormsg"))) { $(this).after($(".errormsg")); }
+                    $(this).remove();
+                });
+            }
+        });
+
+        //After Click Save Button Pass All Data View To Controller For Save Database
+        function saveSale(data) {
+            return $.ajax({
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                type: 'POST',
+                url: "/ItemSales/SaveSale",
+                data: data,
+                success: function (result) {
+                    if (result == "Success! Order Is Complete!") {
+                        alert(result);
+                        location.reload();
+                    }
+                    else {
+                        alert(result + "<p> Try again Later ! </p>");
+                    }
+
+                },
+                error: function () {
+                    alert(result);
+
+                }
+            });
+        }
+
+        //Collect Multiple Order List For Pass To Controller
+        $("#saveSale").click(function (e) {
+            e.preventDefault();
+
+            var saleArr = [];
+            saleArr.length = 0;
+
+            $.each($("#detailsTable tbody tr"), function () {
+                saleArr.push({
+                    AvailableItemId: $(this).find('td:eq(1)').html(),
+                    SoldQuantity: $(this).find('td:eq(2)').html(),
+                    SoldPrice: $(this).find('td:eq(3)').html(),
+
+                });
+            });
+
+            if (saleArr.length == 0) { alert("You Should Add Your Purchase To the List First !"); return; }
+
+            var data = JSON.stringify({
+                date: $("#date").val(),
+                itemSales: saleArr
+            });
+
+            $.when(saveSale(data)).then(function (response) {
+                console.log(response);
+            }).fail(function (err) {
+                console.log(err);
+            });
+        });
+
+        $(".sales-view").hide();
+        $(".item-sales-view").show();
+        $(".item-sales-view").attr('Id', 'Grid');
+        //change views
+            $("input[type=radio][name=SaleView]").change(function () {
+
+                if (this.value == "SaleView") {
+                    $(".item-sales-view").hide();
+                    $(".item-sales-view").removeAttr('Id', 'Grid');
+                    $(".sales-view").show();
+                    $(".sales-view").attr('Id', 'Grid');
+                } else if (this.value == "ItemSaleView") {
+                    $(".item-sales-view").show();
+                    $(".item-sales-view").attr('Id', 'Grid');
+                    $(".sales-view").hide();
+                    $(".sales-view").removeAttr('Id', 'Grid');
+                }
+            });
+    </script>
+}

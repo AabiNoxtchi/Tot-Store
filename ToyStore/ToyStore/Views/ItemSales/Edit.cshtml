@@ -1,0 +1,106 @@
+﻿@model ToyStore.ViewModels.ItemSales.EditVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>Sale Number :  @Model.SaleId </h2>
+<h2>@(Model.Id > 0 ? "Edit" : "Add")</h2>
+@using (Html.BeginForm("Edit", "ItemSales", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.Id);
+    @Html.HiddenFor(model => model.SaleId);
+
+    <fieldset>
+        <legend>@(Model.Id > 0 ? "for Item : " + Model.AvailableItemsList.FirstOrDefault(i => i.Id==Model.AvailableItemId).Item.Name : "New Item ")</legend>
+        @Html.ValidationMessage("", new { style = "color: red;" })
+
+        <table class="form-table">
+            <tr>
+                <td>@Html.LabelFor(model => model.AvailableItemId)</td>
+                <td colspan="3">
+                   
+                    <select id="AvailableItemId" name="AvailableItemId" style="width:95%;max-width:100%;padding:5px;">
+                        <option></option>
+                        @foreach (AvailableItem availableItem in Model.AvailableItemsList)
+                        {
+                            <option data-availablequantity="@(availableItem.AvailableQuantity)" data-price="@(availableItem.Price)" value="@availableItem.Id"  @(Model.AvailableItemId == availableItem.Id ? "selected" : "")>@Model.AvailableItemsList.FirstOrDefault(i => i.Id == availableItem.Id).Item.Name</option>
+                        }
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.SoldQuantity)</td>
+                <td>
+                    @Html.EditorFor(model => model.SoldQuantity ,null,new{@min = 1})
+                    @Html.ValidationMessageFor(model => model.SoldQuantity, null, new { style = "color: red" })
+                </td>
+
+                <td style = "text-align: right;">@Html.LabelFor(model => model.SoldPrice)</td>
+                <td>
+                    @Html.EditorFor(model => model.SoldPrice, new { htmlAttributes = new { @type = "number", @readonly = "true"} })
+                    @Html.ValidationMessageFor(model => model.SoldPrice, null, new { style = "color: red;" })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2"></td>
+                <td style="text-align: right;">
+                    <label>
+                        Available Quantity Now
+                    </label>
+                </td>
+                <td>
+                        <input type="number" id="availablequantity" name="availablequantity" placeholder="Available Quantity" value="@Model.AvailableItemsList.FirstOrDefault(a=>a.Id==Model.AvailableItemId).AvailableQuantity" readonly />
+                </td>
+            </tr>
+
+        </table>
+        <input type="submit" value="Save" class="button" />&nbsp;<a href="@Url.Action("Index", "ItemSales")" class="button smallbtn">Cancel</a>
+
+    </fieldset>
+}
+@section scripts{
+    <script>
+
+        $("#AvailableItemId").change(function () {
+
+            $(".errormsg").remove();
+            if ($(this).val() !=@Model.AvailableItemId) {
+                $("#availablequantity").val($(this).find(':selected').data('availablequantity'));
+                $("#SoldQuantity").val('');
+                $("#SoldQuantity").attr({
+                    "max": $("#availablequantity").val()
+                });
+
+                $("#SoldPrice").val($(this).find(':selected').data('price'));
+            } else {
+                $("#availablequantity").val($(this).find(':selected').data('availablequantity'));
+                $("#SoldQuantity").val(@Model.SoldQuantity);
+                $("#SoldQuantity").attr({
+                    "max": $("#availablequantity").val()
+                });
+
+                $("#SoldPrice").val(@Model.SoldPrice);
+            }
+        });
+
+        $("#SoldQuantity").change(function () {
+            $(".errormsg").remove();
+            var q = $.trim($(this).val());
+            var maxq = $("#availablequantity").val();
+            var isnotvalidquantity = Number(q) > Number(maxq);
+
+            if (q == "" || !(q > 0)) {
+
+                $(this).after('<p class="errormsg" style="color:red">Quantity Must be avalue greater than 0</p>');
+            } else if (isnotvalidquantity) {
+                $(this).after('<p class="errormsg" style="color:red">Quantity Must Be Less than Available Quantity ! </p>');
+            }
+        });
+
+    </script>
+}
+
+
+

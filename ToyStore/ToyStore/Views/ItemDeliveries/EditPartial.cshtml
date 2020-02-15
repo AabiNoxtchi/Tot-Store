@@ -1,0 +1,62 @@
+﻿@model ToyStore.ViewModels.ItemDeliveries.EditVM
+       
+        <table id="innerTable">
+            
+            @Html.ValidationMessage("", new { style = "color: red;" })
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(model => model.Id)
+            <tr>
+                <td>@Html.LabelFor(model => model.Date)</td>
+                <td>
+                    @Html.TextBoxFor(model => model.Date, new { @class = "DateTimePicker" })
+                    @Html.ValidationMessageFor(model => model.Date)
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.SupplierId)</td>
+                <td>
+                    @Html.DropDownListFor(model => model.SupplierId, new SelectList(Model.SuppliersList, "Value", "Text"))
+                    <input type="button" id="AddNewSupplierBtn" value="Or Add New Supplier" />
+                    @Html.ValidationMessageFor(model => model.ItemId, null, new { style = "color: red;" })
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.ItemId)</td>
+                <td>
+                    @Html.DropDownListFor(model => model.ItemId, new SelectList(Model.ItemsList, "Value", "Text"))
+                    @Html.ValidationMessageFor(model => model.ItemId, null, new { style = "color: red;" })
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.DeliveredQuantity)</td>
+                <td>
+                    @Html.TextBoxFor(model => model.DeliveredQuantity)
+                    @Html.ValidationMessageFor(model => model.DeliveredQuantity, null, new { style = "color: red;" })
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.DeliveryPrice)</td>
+                <td>
+                    @Html.TextBoxFor(model => model.DeliveryPrice)
+                    @Html.ValidationMessageFor(model => model.DeliveryPrice, null, new { style = "color: red;" })
+                </td>
+            </tr>
+        </table>
+   
+
+
+
+<script>
+    //# sourceURL=PartialEdit.js
+    $(function () {
+
+        $("#AddNewSupplierBtn").click(function () {
+
+            var r = confirm("Alert !\nYou Are About to Leave This Page !");
+            if (r == true) {
+                window.location.href = "Suppliers/Edit";
+            }
+        });
+
+    });
+</script>

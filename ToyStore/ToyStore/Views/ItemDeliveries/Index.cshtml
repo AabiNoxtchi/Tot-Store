@@ -1,0 +1,131 @@
+﻿@model ToyStore.ViewModels.ItemDeliveries.IndexVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Deliveries";
+}
+
+<div class="my-container">
+    @{ Html.RenderPartial("/Views/Shared/IndexFilterPartial.cshtml", Model.Filter); }
+</div>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <div class="row">
+            <h2 class="panel-title pull-left" style="margin-left:10px;">
+                <strong>Deliveries</strong>
+            </h2>
+        </div>
+    </div>
+
+    <a href="@Url.Action("Edit","ItemDeliveries")" class="button">Add new Delivery</a>
+
+    @using (Html.BeginForm("Export", "ItemDeliveries", FormMethod.Post, new { @class = "exportBtn" }))
+    {
+        <input type="hidden" name="GridHtml" />
+        <input class="button" type="submit" id="btnSubmit" value="Export" />
+    }
+
+    @{ Html.RenderPartial("/Views/Shared/PagerPartial.cshtml", Model.Pager); }
+
+    <div id="Grid">
+        @*cellpadding="5" cellspacing="0" style="border: 1px solid #ccc;" *@
+        <table class="exportableTable">
+            <tr>
+                <th><a href="@Url.Action("Index","ItemDeliveries")?OrderBy.Date=date">Date</a></th>
+                <th><a href="@Url.Action("Index","ItemDeliveries")?OrderBy.DeliveredItem=item">Item</a></th>
+                <th><a href="@Url.Action("Index","ItemDeliveries")?OrderBy.DeliveredQuantity=quantity">Quantity</a></th>
+                <th><a href="@Url.Action("Index","ItemDeliveries")?OrderBy.DeliveryPrice=price">Price</a></th>
+                <th><a href="@Url.Action("Index","ItemDeliveries")?OrderBy.Supplier=supplier">Supplier</a></th>
+                <th class="removable"></th>
+            </tr>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Date</td>
+                    <td>@Model.Filter.ItemsList.FirstOrDefault(c => c.Value == item.AvailableItem.ItemId.ToString()).Text</td>
+                    <td>@item.DeliveredQuantity</td>
+                    <td>@String.Format("{0:C}", item.DeliveryPrice)</td>
+                    <td>@Model.Filter.SuppliersList.FirstOrDefault(c => c.Value == item.SupplierId.ToString()).Text</td>
+
+                    <td class="removable">
+                        <a href="@Url.Action("Edit", "ItemDeliveries", new { Id = item.Id })" class="button smallbtn">edit</a>
+                        <a href="@Url.Action("Delete", "ItemDeliveries", new { Id = item.Id })" class="button smallbtn" style="background-color: darkslateblue">delete</a>
+                    </td>
+
+                </tr>
+            }
+        </table>
+    </div>
+    </div>
+
+    <hr />
+    @*<div id="modal">
+            <form method="post" id="form">
+                <fieldset>
+                <legend><input type="button" id="AddNewDeliveryBtn" value="Ajax Add new Delivery" /></legend>
+                <table>
+                    <tr>
+                        <td>
+                            <table id="innerTable"></table>
+                        </td>
+                    </tr>
+
+                    <tr id="saveclosebtn">
+                        <td colspan="2"><input type="submit" id="submitBtn" value="Save" />&nbsp;<input type="button" id="Close" value="Close" /></td>
+
+                    </tr>
+                </table>
+                </fieldset>
+            </form>
+        </div>*@
+
+    @section scripts{
+        <script>
+
+            $("#saveclosebtn").css("display", "none");
+
+            $("#AddNewDeliveryBtn").click(function () {
+                $("#saveclosebtn").css("display", "inline");
+                $.ajax({
+                    url: '/ItemDeliveries/Edit',
+                    type: 'Get',
+                    dataType: 'html',
+                    success: function (data) { //we got the response
+                        console.log(typeof (data));
+                        $("#innerTable").html(data);
+
+                    },
+                    error: function (jqxhr, status, exception) {
+                        alert('Error Occured !!!', exception);
+                    }
+                });
+            });
+
+            $("#submitBtn").click(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/ItemDeliveries/Edit',
+                    type: 'Post',
+                    data: $("#form").serialize(),
+                    //dataType: 'html',
+                    success: function (data) { //we got the response
+
+                        // AddedRecordsNumber++;
+                        $("#innerTable").replaceWith(data);
+
+                    },
+                    error: function (jqxhr, status, exception) {
+                        alert('Error Occured !!!', exception);
+                    }
+                });
+            });
+
+            $("#Close").click(function () {
+
+                location.reload();
+
+            });
+
+
+
+        </script>
+    }

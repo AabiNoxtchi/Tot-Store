@@ -1,0 +1,33 @@
+﻿@model ToyStore.ViewModels.Items.EditVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@(Model.Id > 0 ? "Edit" : "Add")</h2>
+
+@using (Html.BeginForm("Edit", "Items", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id)
+    <fieldset>
+
+        <legend>@(Model.Id > 0 ? Model.Name : "New Toy")</legend>
+        @Html.ValidationMessage("", new { style = "color: red;" })
+
+        <div class="my-container">
+            <table class="form-table">
+                @{ Html.RenderPartial("/Views/Items/EditPartial.cshtml", Model); }
+            </table>
+            <input type="submit" value="Save" class="button" id="submitPartialEdit" />&nbsp;
+            <a href="@Url.Action("Index", "Items")" class="button" id="cancelPartialEdit">Cancel</a>
+        </div>
+    </fieldset>
+}
+
+
+
+
+
+
+
+

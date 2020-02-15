@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Toy Store";
+}
+
+<div class="jumbotron">
+    <h1>Toy Store</h1>
+</div>
+
+<div class="row">
+    <div class="col-md-3">
+        <h2>Available Toys</h2>
+        <p>Available Toys in the Toy Store .</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Items")">Toys &raquo;</a></p>
+        <p><a class="btn btn-default" href="@Url.Action("Edit","Items")">Add New Toy &raquo;</a></p>
+    </div>
+    <div class="col-md-3">
+        <h2>Deliveries</h2>
+        <p>Deliveries made for the Store .</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","ItemDeliveries")">Deliveries &raquo;</a></p>
+        <p><a class="btn btn-default" href="@Url.Action("Edit","ItemDeliveries")">Add New Delivery &raquo;</a></p>
+    </div>
+    <div class="col-md-3">
+        <h2>Sales</h2>
+        <p>Sales made in the Store .</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","ItemSales")">Sales &raquo;</a></p>
+        <p><a class="btn btn-default" href="@Url.Action("Edit","ItemSales")">Add New Sale &raquo;</a></p>
+    </div>
+    <div class="col-md-3">
+        <h2>Suppliers</h2>
+        <p>Suppliers to work with .</p>
+        <p><a class="btn btn-default" href="@Url.Action("Index","Suppliers")">Suppliers &raquo;</a></p>
+        <p><a class="btn btn-default" href="@Url.Action("Edit","Suppliers")">Add New Supplier &raquo;</a></p>
+    </div>
+</div>

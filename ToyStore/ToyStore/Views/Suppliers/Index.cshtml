@@ -1,0 +1,64 @@
+﻿@model ToyStore.ViewModels.Suppliers.IndexVM
+@{
+    ViewBag.Title = "Index";
+    ViewBag.Title = "Suppliers";
+}
+
+
+    <div class="my-container">
+        @{ Html.RenderPartial("/Views/Shared/IndexFilterPartial.cshtml", Model.Filter); }
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <div class="row">
+                <h2 class="panel-title pull-left" style="margin-left:10px;">
+                    <strong>Suppliers</strong>
+                </h2>
+            </div>
+        </div>
+        <a href="@Url.Action("Edit","Suppliers")" class="button">Add new Supplier</a>
+
+        @using (Html.BeginForm("Export", "Items", FormMethod.Post, new { @class = "exportBtn" }))
+        {
+            <input type="hidden" name="GridHtml" />
+            <input class="button" type="submit" id="btnSubmit" value="Export" />
+        }
+
+        @{ Html.RenderPartial("/Views/Shared/PagerPartial.cshtml", Model.Pager); }
+
+        <div id="Grid">
+
+            <table class="exportableTable">
+                <tr>
+                    <th><a href="@Url.Action("Index","Suppliers")?OrderBy.Name=name">Name</a></th>
+                    <th><a href="@Url.Action("Index","Suppliers")?OrderBy.DDCNumber=number">DDC Number</a></th>
+                    <th><a href="@Url.Action("Index","Suppliers")?OrderBy.PhoneNumber=number">Phone Number</a></th>
+                    <th><a href="@Url.Action("Index","Suppliers")?OrderBy.Email=email">Email</a></th>
+                    <th><a href="@Url.Action("Index","Suppliers")?OrderBy.Address=address">Address</a></th>
+                    <th><a href="@Url.Action("Index","Suppliers")?OrderBy.City=city">City</a></th>
+                    <th class="removable"></th>
+
+                </tr>
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Name</td>
+                        <td>@item.DDCNumber</td>
+                        <td>@item.PhoneNumber</td>
+                        <td>@item.Email</td>
+                        <td>@item.Address</td>
+                        <td>@Model.Filter.CitiesList.FirstOrDefault(c => c.Value == item.CityId.ToString()).Text</td>
+                        <td class="removable">
+                            <a href="@Url.Action("Edit", "Suppliers", new { Id = item.Id })" class="button smallbtn">edit</a>
+                            <a href="@Url.Action("Delete", "Suppliers", new { Id = item.Id })" class="button smallbtn" style="background-color: darkslateblue">delete</a>
+                        </td>
+                    </tr>
+                }
+            </table>
+        </div>
+    </div>
+<hr/>
+
+
+
+

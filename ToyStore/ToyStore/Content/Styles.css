@@ -1,0 +1,148 @@
+﻿body {
+}
+
+.navbar {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    background-color: #0b0c10;
+}
+
+    .navbar ul {
+        width: 100%;
+    }
+
+    .navbar a {
+        padding: 20px;
+        text-align: end;
+        text-decoration: none;
+        text-transform: uppercase;
+        color: white;
+        font-size: 1.4em;
+        font-weight: 700;
+        letter-spacing: .1em
+    }
+
+.special-h2-li {
+    font-size: 2.5em;
+    font-weight: 700;
+    padding-right: 10%;
+    text-align: end;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #9d9d9d;
+}
+
+.navbar a:hover, input[type=submit]:hover {
+    /* background-color: #1f2833;*/
+    color: #80d7ec;
+}
+
+.selected {
+    background-color: #1f2833;
+    color: #80d7ec;
+}
+
+.container {
+    width: 100%;
+}
+
+.my-container {
+    border-bottom: 2px solid black;
+    padding-top: 2%;
+    padding-left: 20px;
+}
+
+.My-pager, .My-pager select, .My-pager ul, .My-pager li {
+    display: inline;
+}
+
+table {
+    width: 100%;
+    border: 1px solid #ccc;
+}
+
+tr:hover {
+    background-color: #f5f5f5;
+}
+
+tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.exportableTable th {
+    background-color: #4E9CAF;
+    border: 1px solid #ccc;
+    padding: 10px 20px;
+}
+
+.exportableTable td, th.table {
+    border: 1px solid #ccc;
+    padding: 5px 20px;
+    margin: 1px;
+}
+
+.exportableTable th:last-child {
+    width:160px;
+}
+
+.exportableTable td:last-child {
+    padding: 5px 10px;
+}
+
+.exportableTable a {
+    color: white;
+}
+
+.form-table {
+    width: 70%;
+}
+
+.form-table tr td:first-child{
+    width:15%;
+    text-align:right;
+    padding-right:10px;
+}
+
+    .form-table tr, td {
+        background-color: white;
+        margin: 1%;
+        padding: 1%;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+    .form-table tr td input[type="text"],.form-table tr td textarea{
+        display:block;
+        width:95%;
+        max-width:100%;
+       margin:5px;
+       padding:5px;
+       
+    }
+
+
+input:read-only {
+    background-color:darkgray;
+}
+    .button {
+    display: inline-block;
+    background: #4E9CAF;
+    padding: 10px 35px;
+    margin: 10px;
+    text-align: center;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+}
+
+.exportBtn {
+    display: inline;
+}
+    
+    .removable .button{
+       margin:1px;
+       padding:10px 15px;
+       
+    }
+
+  

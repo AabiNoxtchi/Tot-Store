@@ -1,0 +1,173 @@
+﻿@model ToyStore.ViewModels.ItemDeliveries.EditVM
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2>@(Model.Id > 0 ? "Edit" : "Add")</h2>
+@using (Html.BeginForm("Edit", "ItemDeliveries", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    @Html.HiddenFor(model => model.Id);
+    <fieldset>
+        <legend>@(Model.Id > 0 ? "Delivery Number : " + Model.Id : "New Delivery")</legend>
+        @Html.ValidationMessage("", new { style = "color: red;" })
+
+        <table class="form-table">
+            <tr>
+                <td>@Html.LabelFor(model => model.Date)</td>
+                <td>
+                    @Html.TextBoxFor(model => model.Date, new { @class = "DateTimePicker" })
+                    @Html.ValidationMessageFor(model => model.Date)
+                </td>
+            </tr>
+            <tr>
+
+
+                <td>@Html.LabelFor(model => model.ItemId)</td>
+                <td>
+                    <select id="ItemId" name="ItemId" placeholder="Product Name" class="form-control" style="width:95%;max-width:100%;">
+                        <option></option>
+                        @foreach (Item item in Model.ItemsList)
+                        {
+                            <option data-price="@(item.AvailableItems.FirstOrDefault(a=>true)!=null?item.AvailableItems.FirstOrDefault(a=>true).Price:0)"
+                                    value="@item.Id" @(Model.ItemId == item.Id ? "selected" : "")>
+                                @item.Name
+                            </option>
+
+                        }
+                    </select>
+                    @*@Html.DropDownListFor(model => model.ItemId, new SelectList(Model.ItemsList, "Value", "Text"), null, new { style = "padding:5px;width:95%;max-width:100%;" })*@
+                    @Html.ValidationMessageFor(model => model.ItemId, null, new { style = "color: red;" })
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align:left">
+                    <input type="button" id="AddNewItemBtn" value="Or Add New Item" class="button" />
+                </td>
+            </tr>
+            <tr id="hiddenForAddNewItemBtn" style="display:none">
+                <td></td>
+                <td>
+                    <table class="form-table" style="width:100%">
+                        <tr>
+                            <td>@Html.LabelFor(model => model.ItemsEditVM.Name)</td>
+                            <td>@Html.TextBoxFor(model => model.ItemsEditVM.Name, new { onclick = "ItemsEditVM_Nameonclick();" }) @Html.ValidationMessageFor(model => model.ItemsEditVM.Name, null, new { style = "color: red;" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.ItemsEditVM.IdentificationKod)</td>
+                            <td>@Html.TextBoxFor(model => model.ItemsEditVM.IdentificationKod) @Html.ValidationMessageFor(model => model.ItemsEditVM.IdentificationKod, null, new { style = "color: red;" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.ItemsEditVM.CategoryId)</td>
+                            <td>
+                                @Html.DropDownListFor(model => model.ItemsEditVM.CategoryId, new SelectList(Model.ItemsEditVM.CategoriesList, "Value", "Text"), new { onchange = "CategoryIdonchange();" })
+                                <input type="button" id="AddNewCategoryBtn" value="Or Add New Category !" class="button" onclick="AddNewCategoryBtnonclick();" />
+                                @Html.ValidationMessageFor(model => model.ItemsEditVM.CategoryId, null, new { style = "color: red;" })
+                            </td>
+                        </tr>
+                        <tr id="hiddenForAddNewCategoryBtn" style="display:none">
+                            <td>@Html.LabelFor(model => model.ItemsEditVM.NewCategory)</td>
+                            <td>@Html.TextBoxFor(model => model.ItemsEditVM.NewCategory, new { onclick = "NewCategoryonchange();" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.ItemsEditVM.AgeId)</td>
+                            <td>@Html.DropDownListFor(model => model.ItemsEditVM.AgeId, new SelectList(Model.ItemsEditVM.AgesList, "Value", "Text"))</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.ItemsEditVM.Gender)</td>
+                            <td>
+                                @Html.RadioButtonFor(Model => Model.ItemsEditVM.Gender, "Boys") Boys
+                                @Html.RadioButtonFor(Model => Model.ItemsEditVM.Gender, "Girls") Girls
+                                @Html.RadioButtonFor(Model => Model.ItemsEditVM.Gender, "Both") Both
+                            </td>
+                            <td>@Html.ValidationMessageFor(model => model.ItemsEditVM.Gender, null, new { style = "color: red;" })</td>
+                        </tr>
+                        <tr>
+                            <td>@Html.LabelFor(model => model.ItemsEditVM.Description)</td>
+                            <td>@Html.TextAreaFor(model => model.ItemsEditVM.Description) @Html.ValidationMessageFor(model => model.ItemsEditVM.Description, null, new { style = "color:red" })</td>
+                        </tr>
+                        <tr>
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.SupplierId)</td>
+                <td>
+                    @Html.DropDownListFor(model => model.SupplierId, new SelectList(Model.SuppliersList, "Value", "Text"), null, new { style = "padding:5px;max-width:100%;" })
+                    <input type="button" id="AddNewSupplierBtn" value="Or Add New Supplier" />
+                    @Html.ValidationMessageFor(model => model.SupplierId, null, new { style = "color: red;" })
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.DeliveredQuantity)</td>
+                <td>
+                    @Html.EditorFor(model => model.DeliveredQuantity, new { htmlAttributes = new { @type = "number", min = 1 } })
+                    @Html.ValidationMessageFor(model => model.DeliveredQuantity, null, new { style = "color: red;" })
+                </td>
+            </tr>
+            <tr>
+                <td>@Html.LabelFor(model => model.DeliveryPrice)</td>
+                <td>
+                    @Html.EditorFor(model => model.DeliveryPrice, new { htmlAttributes = new { @type = "number", step = "any", min = 1 } })
+                    @Html.ValidationMessageFor(model => model.DeliveryPrice, null, new { style = "color: red;" })
+                </td>
+            </tr>
+        </table>
+        <input type="submit" value="Save" class="button" />&nbsp;<a href="@Url.Action("Index", "ItemDeliveries")" class="button smallbtn">Cancel</a>
+
+    </fieldset>
+}
+@section scripts{
+    <script>
+        if ($("#ItemsEditVM_NewCategory").val().length > 0) {
+            $("#hiddenForAddNewCategoryBtn").show();
+        };
+
+        if ($("#ItemsEditVM_Name").val().length > 0
+            || $("#ItemsEditVM_IdentificationKod").val().length > 0
+            || $("#ItemsEditVM_CategoryId").val().length > 0
+            || $("#ItemsEditVM_NewCategory").val().length > 0
+            || $("#ItemsEditVM_AgeId").val().length > 0) {
+            $("#hiddenForAddNewItemBtn").show();
+        };
+
+        $("#ItemId").change(function () {
+            $("#hiddenForAddNewItemBtn").hide();
+            $("#DeliveryPrice").val($("#ItemId option:selected").data('price'));
+        });
+
+        $("#AddNewSupplierBtn").click(function () {
+            console.log("hi");
+            var r = confirm("Alert !\nYou Are About to Leave This Page !");
+            if (r == true) {
+                window.location.href = "/Suppliers/Edit";
+            }
+        });
+
+        $("#AddNewItemBtn").click(function () {
+            $("#hiddenForAddNewItemBtn").toggle();
+
+        });
+
+        function ItemsEditVM_Nameonclick() {
+            $("#ItemId").val("");
+            $("#DeliveryPrice").val("");
+        };
+
+        function AddNewCategoryBtnonclick() {
+            $("#hiddenForAddNewCategoryBtn").toggle();
+        };
+        function CategoryIdonchange() {
+            $("#NewCategory").val("");
+        };
+        function NewCategoryonchange() {
+            $("#CategoryId").val("");
+        }
+
+    </script>
+}
+
+
+
+
