@@ -231,7 +231,7 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="D:\Uni-2019\УИС\ToyStore\DataAccess\DataAccess.csproj">
+    <ProjectReference Include="..\DataAccess\DataAccess.csproj">
       <Project>{0e0a0786-69fd-41a5-8104-57325319141f}</Project>
       <Name>DataAccess</Name>
     </ProjectReference>

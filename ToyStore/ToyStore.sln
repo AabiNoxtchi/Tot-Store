@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.28307.645
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ToyStore", "ToyStore\ToyStore.csproj", "{AD413BC3-7059-40FB-AC3F-791D68C9EF9A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "D:\Uni-2019\УИС\ToyStore\DataAccess\DataAccess.csproj", "{0E0A0786-69FD-41A5-8104-57325319141F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataAccess", "DataAccess\DataAccess.csproj", "{0E0A0786-69FD-41A5-8104-57325319141F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
