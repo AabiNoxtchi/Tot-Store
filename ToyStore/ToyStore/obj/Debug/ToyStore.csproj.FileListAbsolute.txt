@@ -124,3 +124,7 @@ D:\Uni-2019\УИС\ToyStore\ToyStore\obj\Debug\ToyStore.csproj.CoreCompileInputs
 D:\Uni-2019\УИС\ToyStore\ToyStore\obj\Debug\ToyStore.csproj.CopyComplete
 D:\Uni-2019\УИС\ToyStore\ToyStore\obj\Debug\ToyStore.dll
 D:\Uni-2019\УИС\ToyStore\ToyStore\obj\Debug\ToyStore.pdb
+D:\Uni-2019\УИС\Toy-Store\Toy-Store\ToyStore\ToyStore\obj\Debug\ToyStore.csprojAssemblyReference.cache
+D:\Uni-2019\УИС\Toy-Store\Toy-Store\ToyStore\ToyStore\obj\Debug\ToyStore.csproj.CoreCompileInputs.cache
+D:\Uni-2019\УИС\Toy-Store\Toy-Store\ToyStore\ToyStore\obj\Debug\ToyStore.dll
+D:\Uni-2019\УИС\Toy-Store\Toy-Store\ToyStore\ToyStore\obj\Debug\ToyStore.pdb
